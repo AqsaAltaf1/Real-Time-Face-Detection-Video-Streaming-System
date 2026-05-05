@@ -24,6 +24,8 @@ async def ingest_video_feed(websocket: WebSocket) -> None:
                         frame_rgb=frame_rgb,
                         frame_id=message.frame_id,
                     )
+                    annotated_rgb = FrameCodec.draw_roi_rectangle(frame_rgb, message.roi)
+                    message.frame = FrameCodec.encode_rgb_array_to_data_url(annotated_rgb)
                 except Exception:
                     # Keep ingest resilient; malformed frames become no-detection ROI.
                     message.roi = face_detection_service.empty_roi(frame_id=message.frame_id)
