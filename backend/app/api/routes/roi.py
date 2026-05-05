@@ -1,0 +1,11 @@
+from fastapi import APIRouter
+
+from app.dependencies import stream_state_service
+from app.schemas.roi import ROIData
+
+router = APIRouter()
+
+
+@router.get("/latest", response_model=ROIData)
+def get_latest_roi() -> ROIData:
+    return stream_state_service.get_latest_roi()
