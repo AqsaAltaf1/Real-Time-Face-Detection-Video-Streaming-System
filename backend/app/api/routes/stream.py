@@ -1,7 +1,10 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.dependencies import stream_hub, stream_state_service
+from app.db.session import SessionLocal
+from app.repositories.roi_repository import ROIRepository
 from app.schemas.stream import StreamMessage
+from app.services.roi_service import ROIService
 
 router = APIRouter()
 
@@ -14,6 +17,11 @@ async def ingest_video_feed(websocket: WebSocket) -> None:
             raw_message = await websocket.receive_json()
             message = StreamMessage.model_validate(raw_message)
             payload = stream_state_service.apply_ingest_message(message)
+
+            with SessionLocal() as db_session:
+                roi_service = ROIService(ROIRepository(db_session))
+                roi_service.save_latest(payload.roi)
+
             await stream_hub.broadcast(payload.model_dump(mode="json"))
     except WebSocketDisconnect:
         return
