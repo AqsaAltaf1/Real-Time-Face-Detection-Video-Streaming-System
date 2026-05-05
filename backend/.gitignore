@@ -1,0 +1,13 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Python cache/compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Tool/test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
