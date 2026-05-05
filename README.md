@@ -5,7 +5,7 @@ Monorepo for a containerized system with:
 - `frontend/` (React viewer for stream + ROI data)
 - `postgres` (ROI persistence)
 
-## Quick Start (Chunk 0 Baseline)
+## Quick Start
 
 ### Prerequisites
 - Docker + Docker Compose
@@ -22,8 +22,11 @@ docker compose up --build
 
 ## Current Status
 
-This setup is a baseline scaffolding for the assignment chunks.
-Core API/streaming logic is implemented in later chunks.
+- Backend supports ingest and stream WebSockets.
+- Face ROI detection is implemented without OpenCV (MediaPipe).
+- ROI metadata is persisted to PostgreSQL.
+- Frontend displays processed frames and ROI data.
+- Dockerfiles and Compose integration are in place.
 
 ## Repo Layout
 
@@ -38,4 +41,4 @@ Core API/streaming logic is implemented in later chunks.
 
 ## Next Step
 
-Proceed to **Chunk 1** in `TASK_CHUNKS.md` to implement backend route contracts.
+Proceed to **Chunk 7** in `TASK_CHUNKS.md` for error handling and security hardening.
