@@ -4,6 +4,7 @@ from app.schemas.roi import ROIData
 
 
 class StreamMessage(BaseModel):
+    frame_id: int = 0
     frame: str | None = None
     roi: ROIData | None = None
 

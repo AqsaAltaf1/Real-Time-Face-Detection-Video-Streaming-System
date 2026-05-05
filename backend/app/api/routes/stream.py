@@ -1,9 +1,10 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.dependencies import stream_hub, stream_state_service
+from app.dependencies import face_detection_service, stream_hub, stream_state_service
 from app.db.session import SessionLocal
 from app.repositories.roi_repository import ROIRepository
 from app.schemas.stream import StreamMessage
+from app.services.frame_codec import FrameCodec
 from app.services.roi_service import ROIService
 
 router = APIRouter()
@@ -16,6 +17,17 @@ async def ingest_video_feed(websocket: WebSocket) -> None:
         while True:
             raw_message = await websocket.receive_json()
             message = StreamMessage.model_validate(raw_message)
+            if isinstance(message.frame, str):
+                try:
+                    frame_rgb = FrameCodec.decode_to_rgb_array(message.frame)
+                    message.roi = face_detection_service.detect_single_face_roi(
+                        frame_rgb=frame_rgb,
+                        frame_id=message.frame_id,
+                    )
+                except Exception:
+                    # Keep ingest resilient; malformed frames become no-detection ROI.
+                    message.roi = face_detection_service.empty_roi(frame_id=message.frame_id)
+
             payload = stream_state_service.apply_ingest_message(message)
 
             with SessionLocal() as db_session:
